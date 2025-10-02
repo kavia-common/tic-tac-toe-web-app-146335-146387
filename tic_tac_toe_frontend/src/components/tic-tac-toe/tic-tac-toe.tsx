@@ -11,6 +11,27 @@ interface GameState {
   moves: number;
 }
 
+// Helper to render chess icons with accessible labels
+const renderIcon = (value: Player) => {
+  if (value === "X") {
+    // Knight for X
+    return (
+      <span class="icon knight" aria-label="Knight" role="img">
+        ♞
+      </span>
+    );
+  }
+  if (value === "O") {
+    // Queen for O
+    return (
+      <span class="icon queen" aria-label="Queen" role="img">
+        ♛
+      </span>
+    );
+  }
+  return null;
+};
+
 /**
  * PUBLIC_INTERFACE
  * TicTacToe renders a two-player Tic Tac Toe game.
@@ -79,6 +100,8 @@ export const TicTacToe = component$(() => {
   });
 
   const currentPlayer: Player = state.xIsNext ? "X" : "O";
+  const currentPlayerIcon = currentPlayer === "X" ? "♞" : "♛";
+  const currentPlayerLabel = currentPlayer === "X" ? "Knight" : "Queen";
 
   return (
     <div class="game-container center">
@@ -88,8 +111,8 @@ export const TicTacToe = component$(() => {
             <span class="brand-mark" aria-hidden="true" />
             <span class="accent">Tic Tac Toe</span>
           </h2>
-          <span class={`badge ${state.xIsNext ? "badge-primary" : "badge-secondary"}`}>
-            Turn: {currentPlayer}
+          <span class={`badge ${state.xIsNext ? "badge-primary" : "badge-secondary"}`} aria-live="polite">
+            Turn: <span aria-label={currentPlayerLabel} class="badge-icon">{currentPlayerIcon}</span>
           </span>
         </header>
 
@@ -98,16 +121,17 @@ export const TicTacToe = component$(() => {
             {state.board.map((value, i) => {
               const isDisabled = Boolean(state.winner || state.isDraw || value);
               const markClass = value === "X" ? "x" : value === "O" ? "o" : "";
+              const occupiedBy = value === "X" ? "Knight" : value === "O" ? "Queen" : "";
               return (
                 <button
                   key={i}
                   role="gridcell"
-                  aria-label={`Cell ${i + 1}${value ? ` occupied by ${value}` : ""}`}
+                  aria-label={`Cell ${i + 1}${value ? ` occupied by ${occupiedBy}` : ""}`}
                   class={`cell ${markClass} ${isDisabled ? "disabled" : ""}`}
                   onClick$={() => handleClick(i)}
                   disabled={isDisabled}
                 >
-                  {value}
+                  {renderIcon(value)}
                 </button>
               );
             })}
@@ -119,14 +143,24 @@ export const TicTacToe = component$(() => {
             <div class="status-line">
               <span class="status-dot" aria-hidden="true" />
               <span class="status">
-                Next move: <strong class={state.xIsNext ? "badge-primary" : "badge-secondary"}>{currentPlayer}</strong>
+                Next move:{" "}
+                <strong class={state.xIsNext ? "badge-primary" : "badge-secondary"}>
+                  <span aria-label={currentPlayerLabel} class="inline-icon">
+                    {currentPlayerIcon}
+                  </span>
+                </strong>
               </span>
             </div>
           )}
 
           {state.winner && (
             <div class="status-line status-winner" role="status">
-              🏆 Winner: <strong>{state.winner}</strong>
+              🏆 Winner:{" "}
+              <strong>
+                <span aria-label={state.winner === "X" ? "Knight" : "Queen"} class="inline-icon">
+                  {state.winner === "X" ? "♞" : "♛"}
+                </span>
+              </strong>
             </div>
           )}
 
@@ -143,7 +177,7 @@ export const TicTacToe = component$(() => {
           </div>
 
           <div class="subtle" aria-hidden="true">
-            X plays in blue, O plays in amber. Good luck!
+            Knight plays in blue, Queen plays in amber. Good luck!
           </div>
         </div>
       </section>

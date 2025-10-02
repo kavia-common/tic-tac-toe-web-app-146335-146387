@@ -67,8 +67,9 @@
   border: 1px solid rgba(17, 24, 39, 0.08);
   display: grid;
   place-items: center;
-  font-size: calc(var(--cell-size) * 0.45);
-  font-weight: 800;
+  /* Increase base font-size to make chess icons clear and accessible */
+  font-size: calc(var(--cell-size) * 0.6);
+  line-height: 1;
   color: var(--color-text);
   cursor: pointer;
   box-shadow: var(--shadow-sm);
@@ -86,11 +87,14 @@
   transform: translateY(0);
 }
 
-.cell.x {
+/* Player color accents */
+.cell.x .icon,
+.cell.x .inline-icon {
   color: var(--color-primary);
   text-shadow: 0 6px 18px rgba(37,99,235,0.25);
 }
-.cell.o {
+.cell.o .icon,
+.cell.o .inline-icon {
   color: var(--color-secondary);
   text-shadow: 0 6px 18px rgba(245,158,11,0.25);
 }
@@ -98,6 +102,19 @@
 .cell.disabled {
   cursor: not-allowed;
   opacity: 0.75;
+}
+
+/* Icon wrappers for consistency */
+.icon, .inline-icon, .badge-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Slightly smaller icons in badges/status for better balance */
+.inline-icon, .badge-icon {
+  font-size: 1.1em;
+  line-height: 1;
 }
 
 .info-panel {
